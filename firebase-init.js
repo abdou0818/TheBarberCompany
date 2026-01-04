@@ -1,33 +1,21 @@
-// firebase-init.js - تهيئة Firebase بإصدار ESM من CDN
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js';
-import { getAnalytics } from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-analytics.js';
-import { getDatabase } from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js';
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-// بيانات التهيئة المقدمة
-export const firebaseConfig = {
-  apiKey: 'AIzaSyDoUWRZcK0ARp_2ZPoO7OifAzt4YKB9KWc',
-  authDomain: 'my-website-settings.firebaseapp.com',
-  databaseURL: 'https://my-website-settings-default-rtdb.firebaseio.com',
-  projectId: 'my-website-settings',
-  storageBucket: 'my-website-settings.firebasestorage.app',
-  messagingSenderId: '88338120159',
-  appId: '1:88338120159:web:e62460cc704f49866bd86a',
-  measurementId: 'G-06QQVH27E2'
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBA4lhTkkLBZWYYqMw-FY1jEKETaKFymjQ",
+  authDomain: "the-barber-company-302a4.firebaseapp.com",
+  projectId: "the-barber-company-302a4",
+  storageBucket: "the-barber-company-302a4.firebasestorage.app",
+  messagingSenderId: "1001421518378",
+  appId: "1:1001421518378:web:5ff4852c39736e58a8f553",
+  measurementId: "G-X6MHRDF6RQ"
 };
 
-// Initialize Firebase (يدعم التكوين المخصص إن وُجد)
-const effectiveConfig = (typeof window !== 'undefined' && window.__firebaseConfigOverride)
-  ? window.__firebaseConfigOverride
-  : firebaseConfig;
-export const app = initializeApp(effectiveConfig);
-
-// Analytics اختياري، قد يفشل على بيئات محلية بدون دعم gtag
-export let analytics;
-try {
-  analytics = getAnalytics(app);
-} catch (err) {
-  console.warn('Firebase Analytics غير مفعّل أو غير مدعوم في هذه البيئة:', err?.message || err);
-}
-
-// قاعدة البيانات (Realtime Database)
-export const db = getDatabase(app);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
