@@ -39,5 +39,3 @@ async function fetchCurrentSettings() {
   );
   return res.json();
 }
-<script type="module" src="firebase-init.js"></script>
-<script type="module" src="admin.js"></script>
