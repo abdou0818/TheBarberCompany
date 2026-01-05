@@ -6,19 +6,18 @@
 <title>صالون الحلاقة الملكي</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-/* ---------- إعدادات أساسية ---------- */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin:0; padding:0;
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    transition: background 0.5s;
+    background: #f2f2f2;
+    color:#333;
 }
 h2 { margin-top:0; }
 
-/* ---------- ترويسة الصالون مع بارالكس ---------- */
+/* ---------- ترويسة ---------- */
 .shop-header {
     text-align: center;
-    padding: 60px 20px 40px 20px;
+    padding: 60px 20px;
     background: url('https://images.unsplash.com/photo-1602524203105-49f719c6187e?auto=format&fit=crop&w=1400&q=80') no-repeat center center/cover;
     color: #fff;
     position: relative;
@@ -54,7 +53,7 @@ h2 { margin-top:0; }
 .chair-card:hover { transform: translateY(-8px) scale(1.05); box-shadow: 0 15px 25px rgba(0,0,0,0.25); }
 .chair-card.available { border-top: 6px solid #27ae60; }
 .chair-card.occupied { border-top: 6px solid #e74c3c; }
-.chair-status { margin-top: 12px; font-weight: bold; color:#333; font-size:1.1em; }
+.chair-status { margin-top: 12px; font-weight: bold; font-size:1.1em; }
 
 /* ---------- معرض الصور ---------- */
 .gallery-grid {
@@ -76,7 +75,7 @@ h2 { margin-top:0; }
     object-fit: cover;
     transition: transform 0.4s;
 }
-.gallery-item:hover img { transform: scale(1.1) rotate(1deg); }
+.gallery-item:hover img { transform: scale(1.1); }
 .gallery-item-overlay {
     position:absolute; bottom:0; left:0; right:0;
     background: rgba(0,0,0,0.45);
@@ -84,13 +83,15 @@ h2 { margin-top:0; }
     opacity: 0; transition: opacity 0.3s;
 }
 .gallery-item:hover .gallery-item-overlay { opacity:1; }
-.delete-img {
-    position:absolute; top:5px; right:5px;
-    background:rgba(255,0,0,0.8); color:#fff;
-    border:none; border-radius:50%; width:26px; height:26px;
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer; font-size:16px;
+
+/* ---------- نافذة تكبير الصورة ---------- */
+#lightbox {
+    display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,0.85); justify-content:center; align-items:center;
+    z-index:10000;
 }
+#lightbox img { max-width:90%; max-height:90%; border-radius:10px; }
+#lightbox.close { cursor:pointer; }
 
 /* ---------- لوحة الإعدادات ---------- */
 .settings-modal {
@@ -103,27 +104,19 @@ h2 { margin-top:0; }
 .settings-content {
     background:#fff; padding:25px; border-radius:15px;
     width:95%; max-width:550px; max-height:90%; overflow:auto;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 .settings-section { margin-bottom:18px; }
 .settings-section label { display:block; margin-bottom:5px; font-weight:600; }
-.settings-section input, .settings-section textarea { width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; }
+.settings-section input { width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; }
 .modal-close { float:right; cursor:pointer; color:#e74c3c; font-weight:600; font-size:24px; }
 .save-btn, .add-img-btn { padding:12px 18px; background:#27ae60; color:#fff; border:none; border-radius:6px; cursor:pointer; margin-top:5px; transition: background 0.3s; }
 .save-btn:hover, .add-img-btn:hover { background:#219150; }
 #openSettings { position:fixed; bottom:25px; right:25px; z-index:100; font-size:18px; }
-
-/* ---------- تأثير بارالكس عند التمرير ---------- */
-body.parallax .shop-header {
-    background-attachment: fixed;
-    background-position: center;
-    background-size: cover;
-}
 </style>
 </head>
-<body class="parallax">
+<body>
 
-<!-- ======= ترويسة الصالون ======= -->
+<!-- ======= ترويسة ======= -->
 <div class="shop-header">
     <div class="shop-name">صالون الحلاقة الملكي</div>
     <div class="shop-subtitle">أفضل خدمات الحلاقة والتجميل</div>
@@ -139,6 +132,9 @@ body.parallax .shop-header {
 <!-- ======= معرض الصور ======= -->
 <div class="gallery-grid"></div>
 
+<!-- ======= نافذة تكبير الصورة ======= -->
+<div id="lightbox"><img src="" alt=""></div>
+
 <!-- ======= زر فتح الإعدادات ======= -->
 <button id="openSettings" class="save-btn"><i class="fas fa-cog"></i> إعدادات</button>
 
@@ -147,33 +143,23 @@ body.parallax .shop-header {
     <div class="settings-content">
         <span class="modal-close" id="closeSettings">&times;</span>
         <h2>لوحة الإعدادات</h2>
-
         <div class="settings-section">
             <label>اسم الصالون</label>
             <input type="text" data-setting-key="name">
         </div>
-
         <div class="settings-section">
             <label>وصف الصالون</label>
             <input type="text" data-setting-key="subtitle">
         </div>
-
         <div class="settings-section">
             <label>عدد الكراسي</label>
             <input type="number" data-setting-key="chairCount">
         </div>
-
-        <div class="settings-section">
-            <label>الحد الأقصى للانتظار</label>
-            <input type="number" data-setting-key="maxWaiting">
-        </div>
-
         <div class="settings-section">
             <label>رفع صور جديدة للمعرض</label>
             <input type="file" id="addImageInput" accept="image/*" multiple>
             <button class="add-img-btn" id="addImageBtn">إضافة الصورة/الصور</button>
         </div>
-
         <button id="save-settings-btn" class="save-btn">حفظ التغييرات</button>
     </div>
 </div>
@@ -184,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         name: "صالون الحلاقة الملكي",
         subtitle: "أفضل خدمات الحلاقة والتجميل",
         chairCount: 3,
-        maxWaiting: 20,
         gallery: []
     };
 
@@ -195,6 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const addImageInput = document.getElementById('addImageInput');
     const addImageBtn = document.getElementById('addImageBtn');
     const galleryGrid = document.querySelector('.gallery-grid');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = lightbox.querySelector('img');
 
     openBtn.addEventListener('click', ()=>modal.style.display='flex');
     closeBtn.addEventListener('click', ()=>modal.style.display='none');
@@ -223,22 +210,13 @@ document.addEventListener('DOMContentLoaded', () => {
             div.innerHTML = `
                 <img src="${img.src}" alt="${img.alt||''}">
                 <div class="gallery-item-overlay">${img.alt||''}</div>
-                <button class="delete-img" data-index="${index}">&times;</button>
             `;
             galleryGrid.appendChild(div);
-        });
 
-        galleryGrid.querySelectorAll('.delete-img').forEach(btn=>{
-            btn.addEventListener('click', e=>{
-                const idx = parseInt(e.target.dataset.index);
-                currentSettings.gallery.splice(idx,1);
-                applySettings(currentSettings);
+            div.addEventListener('click', ()=>{
+                lightbox.style.display='flex';
+                lightboxImg.src=img.src;
             });
-        });
-
-        document.querySelectorAll('.settings-section input[data-setting-key]').forEach(input=>{
-            const key = input.dataset.settingKey;
-            if(key && settings[key]!==undefined) input.value=settings[key];
         });
     }
 
@@ -270,6 +248,8 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.style.display='none';
         console.log(currentSettings);
     });
+
+    lightbox.addEventListener('click', ()=>lightbox.style.display='none');
 
     applySettings(currentSettings);
 });
