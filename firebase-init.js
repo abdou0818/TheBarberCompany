@@ -1,4 +1,3 @@
-// Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -13,6 +12,7 @@ const firebaseConfig = {
   appId: "1:1001421518378:web:5ff4852c39736e58a8f553"
 };
 
-export const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+
 export const db = getDatabase(app);
 export const storage = getStorage(app);
