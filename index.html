@@ -6,46 +6,128 @@
 <title>صالون الحلاقة الملكي</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-    body { font-family: sans-serif; margin:0; padding:0; background:#f0f0f0; transition: background 0.5s; }
-    .shop-header { text-align:center; padding:20px; }
-    .shop-name { font-size:2em; font-weight:600; }
-    .shop-subtitle { font-size:1.2em; color:#555; }
-    .chairs-grid { display:flex; gap:10px; justify-content:center; margin:20px 0; }
-    .chair-card { background:#fff; padding:15px; border-radius:10px; width:120px; text-align:center; transition: transform 0.3s; }
-    .chair-card.available { border:2px solid #27ae60; }
-    .chair-card.occupied { border:2px solid #e74c3c; }
-    .chair-status { display:block; margin-top:10px; font-weight:600; }
-    .gallery-grid { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:20px 0; }
-    .gallery-item { position:relative; width:150px; height:100px; overflow:hidden; border-radius:10px; cursor:pointer; }
-    .gallery-item img { width:100%; height:100%; object-fit:cover; transition: transform 0.3s; }
-    .gallery-item:hover img { transform: scale(1.1); }
-    .gallery-item-overlay { position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.5); color:#fff; padding:5px; font-size:12px; text-align:center; }
-    .settings-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:1000; }
-    .settings-content { background:#fff; padding:20px; border-radius:10px; width:90%; max-width:500px; max-height:90%; overflow:auto; }
-    .settings-section { margin-bottom:15px; }
-    .settings-section label { display:block; margin-bottom:5px; font-weight:600; }
-    .settings-section input, .settings-section textarea { width:100%; padding:8px; border:1px solid #ccc; border-radius:5px; }
-    .modal-close { float:right; cursor:pointer; color:#e74c3c; font-weight:600; }
-    .save-btn, .add-img-btn { padding:10px 15px; background:#27ae60; color:#fff; border:none; border-radius:5px; cursor:pointer; margin-top:5px; }
+/* ---------- إعدادات أساسية ---------- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin:0; padding:0;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    transition: background 0.5s;
+}
+h2 { margin-top:0; }
+
+/* ---------- ترويسة الصالون ---------- */
+.shop-header {
+    text-align: center;
+    padding: 40px 20px 20px 20px;
+    background: linear-gradient(90deg, #ff7e5f, #feb47b);
+    color: #fff;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+.shop-name { font-size: 2.5em; font-weight: bold; margin-bottom: 10px; }
+.shop-subtitle { font-size: 1.2em; font-weight: 500; }
+
+/* ---------- شبكة الكراسي ---------- */
+.chairs-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 30px 20px;
+}
+.chair-card {
+    width: 120px;
+    padding: 20px;
+    border-radius: 15px;
+    background:#fff;
+    text-align: center;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.chair-card:hover { transform: translateY(-5px); box-shadow: 0 12px 20px rgba(0,0,0,0.2); }
+.chair-card.available { border-top: 5px solid #27ae60; }
+.chair-card.occupied { border-top: 5px solid #e74c3c; }
+.chair-status { margin-top: 10px; font-weight: bold; color:#333; }
+
+/* ---------- معرض الصور ---------- */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    padding: 20px;
+}
+.gallery-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+.gallery-item img {
+    width:100%; height:100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+.gallery-item:hover img { transform: scale(1.1); }
+.gallery-item-overlay {
+    position:absolute; bottom:0; left:0; right:0;
+    background: rgba(0,0,0,0.5);
+    color:#fff; padding:5px; font-size:13px; text-align:center;
+    opacity: 0; transition: opacity 0.3s;
+}
+.gallery-item:hover .gallery-item-overlay { opacity:1; }
+.delete-img {
+    position:absolute; top:5px; right:5px;
+    background:rgba(255,0,0,0.7); color:#fff;
+    border:none; border-radius:50%; width:24px; height:24px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:16px;
+}
+
+/* ---------- لوحة الإعدادات ---------- */
+.settings-modal {
+    display:none; position:fixed; top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.7);
+    justify-content:center; align-items:center;
+    z-index:1000;
+}
+.settings-content {
+    background:#fff; padding:20px; border-radius:15px;
+    width:90%; max-width:500px; max-height:90%; overflow:auto;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+.settings-section { margin-bottom:15px; }
+.settings-section label { display:block; margin-bottom:5px; font-weight:600; }
+.settings-section input, .settings-section textarea { width:100%; padding:8px; border:1px solid #ccc; border-radius:5px; }
+.modal-close { float:right; cursor:pointer; color:#e74c3c; font-weight:600; font-size:22px; }
+.save-btn, .add-img-btn { padding:10px 15px; background:#27ae60; color:#fff; border:none; border-radius:5px; cursor:pointer; margin-top:5px; transition: background 0.3s; }
+.save-btn:hover, .add-img-btn:hover { background:#219150; }
+#openSettings { position:fixed; bottom:20px; right:20px; z-index:100; }
 </style>
 </head>
 <body>
 
+<!-- ======= ترويسة الصالون ======= -->
 <div class="shop-header">
     <div class="shop-name">صالون الحلاقة الملكي</div>
     <div class="shop-subtitle">أفضل خدمات الحلاقة والتجميل</div>
 </div>
 
+<!-- ======= شبكة الكراسي ======= -->
 <div class="chairs-grid">
-    <div class="chair-card available"><div class="chair-status available">متاح</div></div>
-    <div class="chair-card available"><div class="chair-status available">متاح</div></div>
-    <div class="chair-card available"><div class="chair-status available">متاح</div></div>
+    <div class="chair-card available"><div class="chair-status">متاح</div></div>
+    <div class="chair-card available"><div class="chair-status">متاح</div></div>
+    <div class="chair-card available"><div class="chair-status">متاح</div></div>
 </div>
 
+<!-- ======= معرض الصور ======= -->
 <div class="gallery-grid"></div>
 
-<button id="openSettings" class="save-btn">فتح لوحة الإعدادات</button>
+<!-- ======= زر فتح الإعدادات ======= -->
+<button id="openSettings" class="save-btn"><i class="fas fa-cog"></i> إعدادات</button>
 
+<!-- ======= لوحة الإعدادات ======= -->
 <div id="settingsModal" class="settings-modal">
     <div class="settings-content">
         <span class="modal-close" id="closeSettings">&times;</span>
@@ -99,9 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const addImageBtn = document.getElementById('addImageBtn');
     const galleryGrid = document.querySelector('.gallery-grid');
 
-    openBtn.addEventListener('click', () => modal.style.display='flex');
-    closeBtn.addEventListener('click', () => modal.style.display='none');
-    window.addEventListener('click', e => { if(e.target == modal) modal.style.display='none'; });
+    openBtn.addEventListener('click', ()=>modal.style.display='flex');
+    closeBtn.addEventListener('click', ()=>modal.style.display='none');
+    window.addEventListener('click', e=>{ if(e.target==modal) modal.style.display='none'; });
 
     function applySettings(settings){
         document.querySelector('.shop-name').textContent = settings.name;
@@ -122,11 +204,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // معرض الصور
         galleryGrid.innerHTML='';
-        settings.gallery.forEach(img=>{
+        settings.gallery.forEach((img,index)=>{
             const div = document.createElement('div');
             div.classList.add('gallery-item');
-            div.innerHTML = `<img src="${img.src}" alt="${img.alt||''}"><div class="gallery-item-overlay">${img.alt||''}</div>`;
+            div.innerHTML = `
+                <img src="${img.src}" alt="${img.alt||''}">
+                <div class="gallery-item-overlay">${img.alt||''}</div>
+                <button class="delete-img" data-index="${index}">&times;</button>
+            `;
             galleryGrid.appendChild(div);
+        });
+
+        galleryGrid.querySelectorAll('.delete-img').forEach(btn=>{
+            btn.addEventListener('click', e=>{
+                const idx = parseInt(e.target.dataset.index);
+                currentSettings.gallery.splice(idx,1);
+                applySettings(currentSettings);
+            });
         });
 
         // ملء Inputs
@@ -136,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // التحديث عند الكتابة مباشرة
+    // التحديث عند الكتابة
     document.querySelectorAll('.settings-section input[data-setting-key]').forEach(input=>{
         input.addEventListener('input', ()=>{
             const key = input.dataset.settingKey;
@@ -146,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // إضافة الصور من الجهاز مباشرة
+    // إضافة الصور من الجهاز
     addImageBtn.addEventListener('click', ()=>{
         const files = addImageInput.files;
         if(!files.length) return alert('اختر صورة واحدة على الأقل!');
