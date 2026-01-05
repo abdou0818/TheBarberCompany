@@ -26,7 +26,7 @@
     .settings-section label { display:block; margin-bottom:5px; font-weight:600; }
     .settings-section input, .settings-section textarea { width:100%; padding:8px; border:1px solid #ccc; border-radius:5px; }
     .modal-close { float:right; cursor:pointer; color:#e74c3c; font-weight:600; }
-    .save-btn { padding:10px 15px; background:#27ae60; color:#fff; border:none; border-radius:5px; cursor:pointer; }
+    .save-btn, .add-img-btn { padding:10px 15px; background:#27ae60; color:#fff; border:none; border-radius:5px; cursor:pointer; margin-top:5px; }
 </style>
 </head>
 <body>
@@ -72,8 +72,9 @@
         </div>
 
         <div class="settings-section">
-            <label>معرض الصور (JSON)</label>
-            <textarea id="galleryInput" rows="8"></textarea>
+            <label>رفع صور جديدة للمعرض</label>
+            <input type="file" id="addImageInput" accept="image/*" multiple>
+            <button class="add-img-btn" id="addImageBtn">إضافة الصورة/الصور</button>
         </div>
 
         <button id="save-settings-btn" class="save-btn">حفظ التغييرات</button>
@@ -87,25 +88,22 @@ document.addEventListener('DOMContentLoaded', () => {
         subtitle: "أفضل خدمات الحلاقة والتجميل",
         chairCount: 3,
         maxWaiting: 20,
-        gallery: [
-            {"src":"images/photo1.jpg","alt":"قص شعر حديث"},
-            {"src":"images/photo2.jpg","alt":"صالون الحلاقة من الداخل"},
-            {"src":"images/photo3.jpg","alt":"منتجات التجميل"}
-        ]
+        gallery: []
     };
 
     const modal = document.getElementById('settingsModal');
     const openBtn = document.getElementById('openSettings');
     const closeBtn = document.getElementById('closeSettings');
     const saveBtn = document.getElementById('save-settings-btn');
-    const galleryInput = document.getElementById('galleryInput');
+    const addImageInput = document.getElementById('addImageInput');
+    const addImageBtn = document.getElementById('addImageBtn');
+    const galleryGrid = document.querySelector('.gallery-grid');
 
     openBtn.addEventListener('click', () => modal.style.display='flex');
     closeBtn.addEventListener('click', () => modal.style.display='none');
     window.addEventListener('click', e => { if(e.target == modal) modal.style.display='none'; });
 
     function applySettings(settings){
-        // الاسم والوصف
         document.querySelector('.shop-name').textContent = settings.name;
         document.querySelector('.shop-subtitle').textContent = settings.subtitle;
 
@@ -123,27 +121,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // معرض الصور
-        const galleryGrid = document.querySelector('.gallery-grid');
         galleryGrid.innerHTML='';
-        if(settings.gallery && Array.isArray(settings.gallery)){
-            settings.gallery.forEach(img=>{
-                const div = document.createElement('div');
-                div.classList.add('gallery-item');
-                div.innerHTML = `<img src="${img.src}" alt="${img.alt||''}"><div class="gallery-item-overlay">${img.alt||''}</div>`;
-                galleryGrid.appendChild(div);
-            });
-        }
+        settings.gallery.forEach(img=>{
+            const div = document.createElement('div');
+            div.classList.add('gallery-item');
+            div.innerHTML = `<img src="${img.src}" alt="${img.alt||''}"><div class="gallery-item-overlay">${img.alt||''}</div>`;
+            galleryGrid.appendChild(div);
+        });
 
-        // ملء لوحة الإعدادات
-        document.querySelectorAll('.settings-section input').forEach(input=>{
-            const key=input.dataset.settingKey;
+        // ملء Inputs
+        document.querySelectorAll('.settings-section input[data-setting-key]').forEach(input=>{
+            const key = input.dataset.settingKey;
             if(key && settings[key]!==undefined) input.value=settings[key];
         });
-        galleryInput.value = JSON.stringify(settings.gallery,null,2);
     }
 
     // التحديث عند الكتابة مباشرة
-    document.querySelectorAll('.settings-section input').forEach(input=>{
+    document.querySelectorAll('.settings-section input[data-setting-key]').forEach(input=>{
         input.addEventListener('input', ()=>{
             const key = input.dataset.settingKey;
             if(!key) return;
@@ -152,11 +146,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // إضافة الصور من الجهاز مباشرة
+    addImageBtn.addEventListener('click', ()=>{
+        const files = addImageInput.files;
+        if(!files.length) return alert('اختر صورة واحدة على الأقل!');
+        Array.from(files).forEach(file=>{
+            const reader = new FileReader();
+            reader.onload = e=>{
+                currentSettings.gallery.push({src:e.target.result, alt:file.name});
+                applySettings(currentSettings);
+            };
+            reader.readAsDataURL(file);
+        });
+        addImageInput.value='';
+    });
+
     saveBtn.addEventListener('click', ()=>{
-        try{
-            currentSettings.gallery = JSON.parse(galleryInput.value);
-        }catch(e){ alert('صيغة معرض الصور غير صحيحة'); return; }
-        applySettings(currentSettings);
         alert('تم تطبيق جميع التغييرات للزوار مباشرة!');
         modal.style.display='none';
         console.log(currentSettings);
