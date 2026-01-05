@@ -1,245 +1,170 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صالون الحلاقة الملكي</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صالون الحلاقة الملكي</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    body { font-family: sans-serif; margin:0; padding:0; background:#f0f0f0; transition: background 0.5s; }
+    .shop-header { text-align:center; padding:20px; }
+    .shop-name { font-size:2em; font-weight:600; }
+    .shop-subtitle { font-size:1.2em; color:#555; }
+    .chairs-grid { display:flex; gap:10px; justify-content:center; margin:20px 0; }
+    .chair-card { background:#fff; padding:15px; border-radius:10px; width:120px; text-align:center; transition: transform 0.3s; }
+    .chair-card.available { border:2px solid #27ae60; }
+    .chair-card.occupied { border:2px solid #e74c3c; }
+    .chair-status { display:block; margin-top:10px; font-weight:600; }
+    .gallery-grid { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:20px 0; }
+    .gallery-item { position:relative; width:150px; height:100px; overflow:hidden; border-radius:10px; cursor:pointer; }
+    .gallery-item img { width:100%; height:100%; object-fit:cover; transition: transform 0.3s; }
+    .gallery-item:hover img { transform: scale(1.1); }
+    .gallery-item-overlay { position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.5); color:#fff; padding:5px; font-size:12px; text-align:center; }
+    .settings-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:1000; }
+    .settings-content { background:#fff; padding:20px; border-radius:10px; width:90%; max-width:500px; max-height:90%; overflow:auto; }
+    .settings-section { margin-bottom:15px; }
+    .settings-section label { display:block; margin-bottom:5px; font-weight:600; }
+    .settings-section input, .settings-section textarea { width:100%; padding:8px; border:1px solid #ccc; border-radius:5px; }
+    .modal-close { float:right; cursor:pointer; color:#e74c3c; font-weight:600; }
+    .save-btn { padding:10px 15px; background:#27ae60; color:#fff; border:none; border-radius:5px; cursor:pointer; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-content">
-                <div class="settings-icon" id="openSettings">
-                    <i class="fas fa-cog"></i>
-                </div>
-                <div class="lang-switcher" id="langSwitcher">
-                    <button class="lang-current" id="langCurrentBtn" aria-label="Language">
-                        <i class="fas fa-globe"></i>
-                        <span class="lang-label">ع</span>
-                    </button>
-                    <div class="lang-menu" id="langMenu">
-                        <button type="button" data-lang="ar">عربية</button>
-                        <button type="button" data-lang="fr">Français</button>
-                        <button type="button" data-lang="en">English</button>
-                    </div>
-                </div>
-                <h1 class="shop-name" data-i18n="app.title">صالون الحلاقة الملكي</h1>
-                <p class="shop-subtitle" data-i18n="app.subtitle">أفضل خدمات الحلاقة والتجميل</p>
-            </div>
-        </header>
 
-        <!-- Waiting Customers -->
-        <section class="waiting-section">
-            <div class="waiting-card">
-                <h3 data-i18n="waiting.title">العملاء المنتظرون</h3>
-                <div class="waiting-counter" id="waitingCounter">
-                    <span id="waiting-count">0</span>
-                </div>
-                <p data-i18n="waiting.unit">عملاء</p>
-            </div>
-        </section>
+<div class="shop-header">
+    <div class="shop-name">صالون الحلاقة الملكي</div>
+    <div class="shop-subtitle">أفضل خدمات الحلاقة والتجميل</div>
+</div>
 
-        <!-- Chairs Section -->
-        <section class="chairs-section">
-            <h2 data-i18n="chairs.title">الكراسي</h2>
-            <div class="chairs-grid" id="chairsGrid">
-                <div class="chair-card" data-chair="1">
-                    <div class="chair-icon"><i class="fas fa-chair"></i></div>
-                    <h3>كرسي 1</h3>
-                    <span class="chair-status available">متاح</span>
-                </div>
-                <div class="chair-card" data-chair="2">
-                    <div class="chair-icon"><i class="fas fa-chair"></i></div>
-                    <h3>كرسي 2</h3>
-                    <span class="chair-status available">متاح</span>
-                </div>
-                <div class="chair-card" data-chair="3">
-                    <div class="chair-icon"><i class="fas fa-chair"></i></div>
-                    <h3>كرسي 3</h3>
-                    <span class="chair-status available">متاح</span>
-                </div>
-            </div>
-        </section>
+<div class="chairs-grid">
+    <div class="chair-card available"><div class="chair-status available">متاح</div></div>
+    <div class="chair-card available"><div class="chair-status available">متاح</div></div>
+    <div class="chair-card available"><div class="chair-status available">متاح</div></div>
+</div>
 
-        <!-- Gallery Section -->
-        <section class="gallery-section">
-            <h2 data-i18n="gallery.title">معرض الصور</h2>
-            <div class="gallery-container" id="galleryContainer">
-                <div class="no-images-message" id="noImagesMessage">
-                    <i class="fas fa-images"></i>
-                    <p data-i18n="gallery.no_images_title">لا توجد صور في المعرض</p>
-                    <p class="sub-text" data-i18n="gallery.no_images_sub">يمكن إضافة الصور من الإعدادات</p>
-                </div>
-            </div>
-        </section>
+<div class="gallery-grid"></div>
 
-        <!-- Social Media -->
-        <section class="social-media">
-            <h2 data-i18n="social.title">وسائل التواصل الاجتماعي</h2>
-            <div class="social-links">
-                <a href="#" class="social-link instagram"><i class="fab fa-instagram"></i><span data-i18n="social.instagram">Instagram</span></a>
-                <a href="#" class="social-link tiktok"><i class="fab fa-tiktok"></i><span data-i18n="social.tiktok">TikTok</span></a>
-                <a href="tel:+966123456789" class="social-link phone"><i class="fas fa-phone"></i><span data-i18n="social.phone">الهاتف</span></a>
-            </div>
-        </section>
+<button id="openSettings" class="save-btn">فتح لوحة الإعدادات</button>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <p>&copy; 2024 صالون الحلاقة الملكي. <span data-i18n="footer.rights">جميع الحقوق محفوظة.</span></p>
-        </footer>
-    </div>
+<div id="settingsModal" class="settings-modal">
+    <div class="settings-content">
+        <span class="modal-close" id="closeSettings">&times;</span>
+        <h2>لوحة الإعدادات</h2>
 
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="modal">
-        <div class="modal-content settings-content">
-            <span class="close" id="closeSettings">&times;</span>
-            <h2>إعدادات الموقع</h2>
-
-            <div class="settings-section">
-                <h3>إعدادات عامة</h3>
-                <div class="setting-item"><label>اسم الصالون:</label><input type="text" data-setting-key="name"></div>
-                <div class="setting-item"><label>الوصف:</label><input type="text" data-setting-key="subtitle"></div>
-                <div class="setting-item"><label>عدد الكراسي:</label><input type="number" data-setting-key="chairCount"></div>
-                <div class="setting-item"><label>الحد الأقصى للعملاء المنتظرين:</label><input type="number" data-setting-key="maxWaiting"></div>
-                <div class="setting-item"><label>رابط خلفية الصفحة:</label><input type="text" data-setting-key="backgroundImage"></div>
-            </div>
-
-            <div class="settings-section">
-                <h3>التواصل الاجتماعي</h3>
-                <div class="setting-item"><label>Instagram:</label><input type="text" data-setting-key="instagram"></div>
-                <div class="setting-item"><label>WhatsApp:</label><input type="text" data-setting-key="whatsapp"></div>
-            </div>
-
-            <div class="settings-section">
-                <h3>معرض الصور</h3>
-                <textarea id="galleryInput" placeholder='[{"src":"url1.jpg","alt":"صورة 1"}]'></textarea>
-            </div>
-
-            <div class="modal-buttons">
-                <button id="save-settings-btn" class="confirm-btn">تطبيق التغييرات</button>
-                <button id="closeSettingsBtn" class="cancel-btn">إلغاء</button>
-            </div>
+        <div class="settings-section">
+            <label>اسم الصالون</label>
+            <input type="text" data-setting-key="name">
         </div>
+
+        <div class="settings-section">
+            <label>وصف الصالون</label>
+            <input type="text" data-setting-key="subtitle">
+        </div>
+
+        <div class="settings-section">
+            <label>عدد الكراسي</label>
+            <input type="number" data-setting-key="chairCount">
+        </div>
+
+        <div class="settings-section">
+            <label>الحد الأقصى للانتظار</label>
+            <input type="number" data-setting-key="maxWaiting">
+        </div>
+
+        <div class="settings-section">
+            <label>معرض الصور (JSON)</label>
+            <textarea id="galleryInput" rows="8"></textarea>
+        </div>
+
+        <button id="save-settings-btn" class="save-btn">حفظ التغييرات</button>
     </div>
+</div>
 
-    <!-- Scripts -->
-    <script src="i18n.js"></script>
-    <script src="script.js"></script>
-    <script src="api-integration.js"></script>
-    <script type="module" src="./firebase-init.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    let currentSettings = {
+        name: "صالون الحلاقة الملكي",
+        subtitle: "أفضل خدمات الحلاقة والتجميل",
+        chairCount: 3,
+        maxWaiting: 20,
+        gallery: [
+            {"src":"images/photo1.jpg","alt":"قص شعر حديث"},
+            {"src":"images/photo2.jpg","alt":"صالون الحلاقة من الداخل"},
+            {"src":"images/photo3.jpg","alt":"منتجات التجميل"}
+        ]
+    };
 
-    <!-- إعدادات ديناميكية -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            let currentSettings = {};
+    const modal = document.getElementById('settingsModal');
+    const openBtn = document.getElementById('openSettings');
+    const closeBtn = document.getElementById('closeSettings');
+    const saveBtn = document.getElementById('save-settings-btn');
+    const galleryInput = document.getElementById('galleryInput');
 
-            const openBtn = document.getElementById('openSettings');
-            const closeBtn = document.getElementById('closeSettings');
-            const closeBtn2 = document.getElementById('closeSettingsBtn');
-            const saveBtn = document.getElementById('save-settings-btn');
-            const galleryInput = document.getElementById('galleryInput');
-            const modal = document.getElementById('settingsModal');
+    openBtn.addEventListener('click', () => modal.style.display='flex');
+    closeBtn.addEventListener('click', () => modal.style.display='none');
+    window.addEventListener('click', e => { if(e.target == modal) modal.style.display='none'; });
 
-            openBtn.addEventListener('click', () => modal.style.display = 'block');
-            closeBtn.addEventListener('click', () => modal.style.display = 'none');
-            closeBtn2.addEventListener('click', () => modal.style.display = 'none');
-            window.addEventListener('click', e => { if(e.target==modal) modal.style.display='none'; });
+    function applySettings(settings){
+        // الاسم والوصف
+        document.querySelector('.shop-name').textContent = settings.name;
+        document.querySelector('.shop-subtitle').textContent = settings.subtitle;
 
-            // تحميل الإعدادات المحلية إذا وجدت
-            try {
-                const saved = localStorage.getItem('barbershopSettings');
-                if(saved) currentSettings = JSON.parse(saved);
-            } catch{}
-
-            // تطبيق جميع الإعدادات
-            function applyAllSettings(settings){
-                const nameEl = document.querySelector('.shop-name');
-                const subtitleEl = document.querySelector('.shop-subtitle');
-                if(nameEl) nameEl.textContent = settings.name||'';
-                if(subtitleEl) subtitleEl.textContent = settings.subtitle||'';
-
-                const chairs = document.querySelectorAll('.chair-card');
-                chairs.forEach((card,index)=>{
-                    const status = card.querySelector('.chair-status');
-                    if(index< (settings.chairCount||3)){
-                        card.classList.add('available'); card.classList.remove('occupied');
-                        if(status){ status.textContent='متاح'; status.classList.add('available'); status.classList.remove('occupied'); }
-                    }else{
-                        card.classList.remove('available'); card.classList.add('occupied');
-                        if(status){ status.textContent='مشغول'; status.classList.remove('available'); status.classList.add('occupied'); }
-                    }
-                });
-
-                const waitingCounter = document.getElementById('waiting-count');
-                if(waitingCounter) waitingCounter.textContent = settings.maxWaiting||0;
-
-                if(settings.backgroundImage) document.body.style.backgroundImage = `url(${settings.backgroundImage})`;
-                else document.body.style.backgroundImage = '';
-
-                const socialLinks = {
-                    instagram: document.querySelector('.social-link.instagram'),
-                    whatsapp: document.querySelector('.social-link.phone')
-                };
-                for(let key in socialLinks){
-                    if(socialLinks[key]){
-                        if(settings[key] && settings[key].trim()!==''){
-                            socialLinks[key].setAttribute('href', settings[key]);
-                            socialLinks[key].style.display='flex';
-                        }else socialLinks[key].style.display='none';
-                    }
-                }
-
-                if(settings.gallery && Array.isArray(settings.gallery)){
-                    const galleryGrid = document.getElementById('galleryContainer');
-                    if(galleryGrid){
-                        galleryGrid.innerHTML='';
-                        settings.gallery.forEach(img=>{
-                            const div = document.createElement('div');
-                            div.classList.add('gallery-item');
-                            div.innerHTML = `<img src="${img.src}" alt="${img.alt||''}">`;
-                            galleryGrid.appendChild(div);
-                        });
-                    }
-                }
-
-                // حفظ محلي
-                try{ localStorage.setItem('barbershopSettings', JSON.stringify(settings)); } catch{}
+        // الكراسي
+        const chairCards = document.querySelectorAll('.chair-card');
+        chairCards.forEach((card,i)=>{
+            const status = card.querySelector('.chair-status');
+            if(i<settings.chairCount){
+                card.classList.add('available'); card.classList.remove('occupied');
+                if(status){ status.textContent='متاح'; status.classList.add('available'); status.classList.remove('occupied'); }
+            } else {
+                card.classList.remove('available'); card.classList.add('occupied');
+                if(status){ status.textContent='مشغول'; status.classList.remove('available'); status.classList.add('occupied'); }
             }
-
-            // ملء لوحة التحكم
-            function fillInputs(settings){
-                document.querySelectorAll('[data-setting-key]').forEach(input=>{
-                    const key = input.dataset.settingKey;
-                    if(key && settings[key]!==undefined) input.value=settings[key];
-                });
-                if(settings.gallery) galleryInput.value=JSON.stringify(settings.gallery,null,2);
-            }
-
-            fillInputs(currentSettings);
-            applyAllSettings(currentSettings);
-
-            document.querySelectorAll('[data-setting-key]').forEach(input=>{
-                input.addEventListener('input',()=>{
-                    const key = input.dataset.settingKey;
-                    if(!key) return;
-                    let value = input.type==='number'?parseInt(input.value)||0:input.value;
-                    currentSettings[key]=value;
-                    applyAllSettings(currentSettings);
-                });
-            });
-
-            saveBtn.addEventListener('click',()=>{
-                try{ currentSettings.gallery = JSON.parse(galleryInput.value); }catch(e){ alert('صيغة المعرض غير صحيحة'); return;}
-                applyAllSettings(currentSettings);
-                modal.style.display='none';
-                alert('تم تطبيق جميع التغييرات للزبائن!');
-            });
         });
-    <script src="script.js"></script>
+
+        // معرض الصور
+        const galleryGrid = document.querySelector('.gallery-grid');
+        galleryGrid.innerHTML='';
+        if(settings.gallery && Array.isArray(settings.gallery)){
+            settings.gallery.forEach(img=>{
+                const div = document.createElement('div');
+                div.classList.add('gallery-item');
+                div.innerHTML = `<img src="${img.src}" alt="${img.alt||''}"><div class="gallery-item-overlay">${img.alt||''}</div>`;
+                galleryGrid.appendChild(div);
+            });
+        }
+
+        // ملء لوحة الإعدادات
+        document.querySelectorAll('.settings-section input').forEach(input=>{
+            const key=input.dataset.settingKey;
+            if(key && settings[key]!==undefined) input.value=settings[key];
+        });
+        galleryInput.value = JSON.stringify(settings.gallery,null,2);
+    }
+
+    // التحديث عند الكتابة مباشرة
+    document.querySelectorAll('.settings-section input').forEach(input=>{
+        input.addEventListener('input', ()=>{
+            const key = input.dataset.settingKey;
+            if(!key) return;
+            currentSettings[key]=input.type==='number'?parseInt(input.value)||0:input.value;
+            applySettings(currentSettings);
+        });
+    });
+
+    saveBtn.addEventListener('click', ()=>{
+        try{
+            currentSettings.gallery = JSON.parse(galleryInput.value);
+        }catch(e){ alert('صيغة معرض الصور غير صحيحة'); return; }
+        applySettings(currentSettings);
+        alert('تم تطبيق جميع التغييرات للزوار مباشرة!');
+        modal.style.display='none';
+        console.log(currentSettings);
+    });
+
+    applySettings(currentSettings);
+});
+</script>
+
 </body>
 </html>
-
