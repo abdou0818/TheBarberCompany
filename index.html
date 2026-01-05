@@ -1,64 +1,221 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>صالون الحلاقة الملكي</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>صالون الحلاقة</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- خط -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background: #111;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 40px 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #000, #222);
+    }
+
+    .shop-name {
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .shop-subtitle {
+      color: #ccc;
+      margin-top: 10px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 12px;
+      min-width: 150px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0,0,0,.5);
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .card span {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .gallery {
+      padding: 20px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .gallery-item {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 10px;
+      transition: transform .3s;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.05);
+    }
+
+    /* نافذة تكبير الصورة */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 10px;
+    }
+
+    /* زر الإدارة */
+    .admin-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #ff9800;
+      color: #000;
+      border: none;
+      padding: 14px 18px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      z-index: 2000;
+    }
+
+    /* نافذة الإعدادات */
+    #adminPanel {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.95);
+      z-index: 3000;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .admin-box {
+      max-width: 500px;
+      margin: auto;
+      background: #1c1c1c;
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .admin-box h2 {
+      text-align: center;
+    }
+
+    .admin-box input,
+    .admin-box button {
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+
+    .admin-box button {
+      background: #4caf50;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .close-admin {
+      background: #f44336;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
+
 <header>
-    <h1 class="shop-name">صالون الحلاقة الملكي</h1>
-    <p class="shop-subtitle">أفضل خدمات الحلاقة والتجميل</p>
+  <div class="shop-name">صالون الحلاقة</div>
+  <div class="shop-subtitle">أفضل خدمات الحلاقة</div>
 </header>
 
-<section class="waiting-section">
-    <div>الزبائن المنتظرين: <span class="waiting-counter">0</span></div>
-</section>
-
-<section class="chairs-section">
-    <div class="chairs-grid">
-        <div class="chair-card" data-chair="1"><h3>كرسي 1</h3><span class="chair-status available">متاح</span></div>
-        <div class="chair-card" data-chair="2"><h3>كرسي 2</h3><span class="chair-status available">متاح</span></div>
-        <div class="chair-card" data-chair="3"><h3>كرسي 3</h3><span class="chair-status available">متاح</span></div>
-    </div>
-</section>
-
-<section class="gallery-section">
-    <h2>معرض الصور</h2>
-    <div class="gallery-grid"></div>
-</section>
-
-<section class="social-section">
-    <a href="#" class="social-link instagram">انستغرام</a>
-    <a href="#" class="social-link phone">واتساب</a>
-</section>
-
-<button id="openSettings">⚙️ إعدادات الصالون</button>
-
-<!-- Modal -->
-<div id="settingsModal" class="modal">
-    <div class="modal-content">
-        <span id="closeSettingsBtn" class="close">&times;</span>
-        <h2>إعدادات الصالون</h2>
-        <div class="settings-section">
-            <label>اسم الصالون: <input type="text" data-setting-key="name"></label>
-            <label>وصف الصالون: <input type="text" data-setting-key="subtitle"></label>
-            <label>عدد الكراسي: <input type="number" data-setting-key="chairCount"></label>
-            <label>الحد الأقصى للانتظار: <input type="number" data-setting-key="maxWaiting"></label>
-            <label>رابط انستغرام: <input type="text" data-setting-key="instagram"></label>
-            <label>رابط واتساب: <input type="text" data-setting-key="whatsapp"></label>
-            <label>رفع الخلفية: <input type="file" id="backgroundInput" accept="image/*"></label>
-            <label>معرض الصور (رفع متعدد): <input type="file" id="galleryInput" accept="image/*" multiple></label>
-            <button id="save-settings-btn">حفظ التغييرات</button>
-        </div>
-    </div>
+<div class="stats">
+  <div class="card">
+    <h3>عدد الكراسي</h3>
+    <span id="chairCountView">0</span>
+  </div>
+  <div class="card">
+    <h3>الحد الأقصى للانتظار</h3>
+    <span id="maxWaitingView">0</span>
+  </div>
 </div>
 
+<section class="gallery">
+  <h2>معرض الصور</h2>
+  <div class="gallery-grid" id="galleryGrid"></div>
+</section>
+
+<!-- تكبير الصورة -->
+<div class="lightbox" id="lightbox">
+  <img src="">
+</div>
+
+<!-- زر الإدارة -->
+<button class="admin-btn" id="openAdmin">⚙️</button>
+
+<!-- لوحة الإدارة -->
+<div id="adminPanel">
+  <div class="admin-box">
+    <h2>إعدادات الموقع</h2>
+
+    <input id="shopName" placeholder="اسم المحل">
+    <input id="shopSubtitle" placeholder="الوصف">
+    <input id="chairCount" type="number" placeholder="عدد الكراسي">
+    <input id="maxWaiting" type="number" placeholder="الحد الأقصى للانتظار">
+
+    <input id="galleryInput" type="file" accept="image/*">
+
+    <button id="saveSettings">💾 حفظ الإعدادات</button>
+    <button class="close-admin" id="closeAdmin">إغلاق</button>
+  </div>
+</div>
+
+<!-- Firebase -->
 <script type="module" src="firebase-init.js"></script>
 <script type="module" src="admin.js"></script>
 
 </body>
 </html>
-
-
