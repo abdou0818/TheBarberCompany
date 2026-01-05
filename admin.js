@@ -1,44 +1,27 @@
-import { db, storage } from './firebase-init.js';
-import { ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-import { ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import { db, storage } from "./firebase-init.js";
+import { doc, setDoc, onSnapshot } from
+  "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const settingsRef = ref(db, 'settings');
-
-// تحميل الإعدادات عند الفتح
-onValue(settingsRef, (snapshot) => {
-  const data = snapshot.val();
-  if (!data) return;
-
-  document.getElementById('shopName').value = data.name || '';
-  document.getElementById('shopSubtitle').value = data.subtitle || '';
-  document.getElementById('chairCount').value = data.chairCount || 0;
-  document.getElementById('maxWaiting').value = data.maxWaiting || 0;
-});
+const settingsRef = doc(db, "siteSettings", "main");
 
 // حفظ الإعدادات
-document.getElementById('saveSettings').onclick = () => {
-  update(settingsRef, {
+document.getElementById("saveSettingsBtn").onclick = async () => {
+  const data = {
     name: shopName.value,
     subtitle: shopSubtitle.value,
     chairCount: Number(chairCount.value),
-    maxWaiting: Number(maxWaiting.value)
-  });
+    maxWaiting: Number(maxWaiting.value),
+    updatedAt: Date.now()
+  };
 
-  alert('✅ تم الحفظ – الزوار سيرون التغييرات فورًا');
+  await setDoc(settingsRef, data, { merge: true });
+  alert("✅ تم الحفظ – الزوار يرون التغييرات فورًا");
 };
 
-// رفع صورة
-document.getElementById('galleryInput').onchange = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const fileRef = sRef(storage, 'gallery/' + Date.now());
-  await uploadBytes(fileRef, file);
-  const url = await getDownloadURL(fileRef);
-
-  update(settingsRef, {
-    gallery: [url]
-  });
-
-  alert('📷 تم رفع الصورة');
-};
+// تحديث فوري للزوار
+onSnapshot(settingsRef, (snap) => {
+  if (!snap.exists()) return;
+  const s = snap.data();
+  document.querySelector(".shop-name").textContent = s.name;
+  document.querySelector(".shop-subtitle").textContent = s.subtitle;
+});
